@@ -5,8 +5,8 @@ class App:
     def __init__(self):
         pyxel.init(160, 240, caption="test")
         pyxel.load("assets/jump_game.pyxres")
-        self.bird_x = 80
-        self.bird_y = 60
+        self.bird_x = 65
+        self.bird_y = 100
         self.bird_is_alive = True
         pyxel.run(self.update, self.draw)
 
