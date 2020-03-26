@@ -3,10 +3,10 @@ import pyxel
 
 class App:
     def __init__(self):
-        pyxel.init(160, 120, caption="test")
+        pyxel.init(160, 240, caption="test")
         pyxel.load("assets/jump_game.pyxres")
-        self.bird_x = 0
-        self.bird_y = 0
+        self.bird_x = 80
+        self.bird_y = 60
         self.bird_is_alive = True
         pyxel.run(self.update, self.draw)
 
