@@ -10,3 +10,7 @@ help:  ## print this help
 run:  ## Run game
 		$(PIPENV_RUN) python src/app.py
 .PHONY: run
+
+edit:  ## Run editor
+		$(PIPENV_RUN) pyxeleditor src/assets/jump_game.pyxres
+.PHONY: editor
