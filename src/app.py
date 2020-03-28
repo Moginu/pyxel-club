@@ -24,9 +24,21 @@ class App:
         self.update_bird()
 
     def draw(self):
+        # render background wiht color 12
         pyxel.cls(12)
 
         # draw bird
+        self.draw_bird()
+        # draw pipe pair
+        self.draw_pipe_pair()
+
+    def update_bird(self):
+        if pyxel.btnp(pyxel.KEY_SPACE):
+            self.bird_y= (self.bird_y-self.bird_rising_speed) %pyxel.height
+        else:
+            self.bird_y = (self.bird_y+self.bird_falling_speed) % pyxel.height
+
+    def draw_bird(self):
         pyxel.blt(
             self.bird_x,
             self.bird_y,
@@ -35,14 +47,30 @@ class App:
             0,
             16,
             16,
-            12,
+            12
         )
 
-    def update_bird(self):
-        if pyxel.btnp(pyxel.KEY_SPACE):
-            self.bird_y= (self.bird_y-self.bird_rising_speed) %pyxel.height
-        else:
-            self.bird_y = (self.bird_y+self.bird_falling_speed) % pyxel.height
+    def draw_pipe_pair(self):
+        pyxel.blt(
+            128,
+            0,
+            0,
+            160,
+            56,
+            192,
+            144,
+            0
+        )
+        pyxel.blt(
+            128,
+            96,
+            0,
+            160,
+            56,
+            192,
+            -144,
+            0
+        )
 
 
 App()
