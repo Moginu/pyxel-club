@@ -3,7 +3,7 @@ import pyxel
 
 class App:
     def __init__(self):
-        pyxel.init(160, 240, caption="Flappy Bird")
+        pyxel.init(200, 240, caption="Flappy Bird")
         pyxel.load("assets/jump_game.pyxres")
 
         # board properties
@@ -49,6 +49,7 @@ class App:
             pyxel.quit()
 
         self.update_bird()
+        self.update_pipe_moving_speed()
         self.update_pipe_pair()
 
     def draw(self):
@@ -67,6 +68,9 @@ class App:
         else:
             self.bird_y = (self.bird_y+self.bird_falling_speed) % pyxel.height
             self.bird_jump = False
+
+    def update_pipe_moving_speed(self):
+        self.pipe_moving_speed += 2 / 10000
 
     def update_pipe_pair(self):
         for pipe, location in self.pipe_pair.items():
