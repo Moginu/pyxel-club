@@ -1,9 +1,11 @@
+import random
+
 import pyxel
 
 
 class App:
     def __init__(self):
-        pyxel.init(200, 240, caption="Flappy Bird")
+        pyxel.init(160, 240, caption="Flappy Bird")
         pyxel.load("assets/jump_game.pyxres")
 
         # board properties
@@ -27,7 +29,7 @@ class App:
                 'x': 128,
                 'y': 0,
                 'u': 160,
-                'v': 56,
+                'v': 50,
                 'w': 192,
                 'h': 144,
             },
@@ -35,12 +37,13 @@ class App:
                 'x': 128,
                 'y': 96,
                 'u': 160,
-                'v': 56,
+                'v': 50,
                 'w': 192,
                 'h': -144,
             },
         }
         self.pipe_moving_speed = (pyxel.width+self.pipe_width) / self.pipe_total_time / self.board_fps
+        self.high_pipe_height = 0
 
         pyxel.run(self.update, self.draw)
 
@@ -49,7 +52,6 @@ class App:
             pyxel.quit()
 
         self.update_bird()
-        self.update_pipe_moving_speed()
         self.update_pipe_pair()
 
     def draw(self):
@@ -69,8 +71,9 @@ class App:
             self.bird_y = (self.bird_y+self.bird_falling_speed) % pyxel.height
             self.bird_jump = False
 
-    def update_pipe_moving_speed(self):
-        self.pipe_moving_speed += 2 / 10000
+    def get_pipe_height(self):
+        self.high_pipe_height = random.randint( 32 , 112 )
+        return self.high_pipe_height
 
     def update_pipe_pair(self):
         for pipe, location in self.pipe_pair.items():
@@ -90,6 +93,8 @@ class App:
 
     def draw_pipe_pair(self):
         for _, location in self.pipe_pair.items():
+            self.get_pipe_height()
+            self.pipe_pair[_]['h'] = self.high_pipe_height
             pyxel.blt(
                 location['x'],
                 location['y'],
@@ -100,6 +105,7 @@ class App:
                 location['h'],
                 0
             )
+
 
 
 App()
