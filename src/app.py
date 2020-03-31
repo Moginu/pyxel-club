@@ -3,7 +3,7 @@ import pyxel
 
 class App:
     def __init__(self):
-        pyxel.init(160, 240, caption="test")
+        pyxel.init(160, 240, caption="Flappy Bird")
         pyxel.load("assets/jump_game.pyxres")
 
         # board properties
@@ -20,6 +20,28 @@ class App:
         self.bird_rising_speed = 10*self.bird_falling_speed
         self.bird_jump = False
 
+        self.pipe_total_time = 4
+        self.pipe_width = 32
+        self.pipe_pair = {
+            'high': {
+                'x': 128,
+                'y': 0,
+                'u': 160,
+                'v': 56,
+                'w': 192,
+                'h': 144,
+            },
+            'low': {
+                'x': 128,
+                'y': 96,
+                'u': 160,
+                'v': 56,
+                'w': 192,
+                'h': -144,
+            },
+        }
+        self.pipe_moving_speed = (pyxel.width+self.pipe_width) / self.pipe_total_time / self.board_fps
+
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -27,6 +49,7 @@ class App:
             pyxel.quit()
 
         self.update_bird()
+        self.update_pipe_pair()
 
     def draw(self):
         # render background wiht color 12
@@ -45,6 +68,10 @@ class App:
             self.bird_y = (self.bird_y+self.bird_falling_speed) % pyxel.height
             self.bird_jump = False
 
+    def update_pipe_pair(self):
+        for pipe, location in self.pipe_pair.items():
+            self.pipe_pair[pipe]['x'] = (location['x'] - self.pipe_moving_speed) % pyxel.width
+
     def draw_bird(self):
         pyxel.blt(
             self.bird_x,
@@ -58,26 +85,17 @@ class App:
         )
 
     def draw_pipe_pair(self):
-        pyxel.blt(
-            128,
-            0,
-            0,
-            160,
-            56,
-            192,
-            144,
-            0
-        )
-        pyxel.blt(
-            128,
-            96,
-            0,
-            160,
-            56,
-            192,
-            -144,
-            0
-        )
+        for _, location in self.pipe_pair.items():
+            pyxel.blt(
+                location['x'],
+                location['y'],
+                0,
+                location['u'],
+                location['v'],
+                location['w'],
+                location['h'],
+                0
+            )
 
 
 App()

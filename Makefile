@@ -15,6 +15,6 @@ edit:  ## Run editor
 		$(PIPENV_RUN) pyxeleditor src/assets/jump_game.pyxres
 .PHONY: editor
 
-flake8:  ## Check flake8
+lint:  ## Check flake8
 		$(PIPENV_RUN) flake8 src/app.py
-.PHONY: flake8
+.PHONY: lint
