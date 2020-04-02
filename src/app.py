@@ -12,6 +12,8 @@ class App:
         # birds properties
         self.bird_x = 65
         self.bird_y = 100
+        self.bird_width = 16
+        self.bird_height = 16
 
         self.bird_is_alive = True
 
@@ -26,10 +28,13 @@ class App:
         self.bird_rising_speed = 2*self.max_falling_speed
         self.bird_jump = False
 
+        # pipes properties
         self.pipe_total_time = 4
         self.pipe_width = 32
+        # TODO: generate randomly
+        self.up_pipe_height = 88
         self.pipe_pair = {
-            'high': {
+            'up': {
                 'x': 128,
                 'y': 0,
                 'u': 160,
@@ -37,7 +42,7 @@ class App:
                 'w': 192,
                 'h': 144,
             },
-            'low': {
+            'down': {
                 'x': 128,
                 'y': 96,
                 'u': 160,
@@ -92,8 +97,8 @@ class App:
             0,
             16 if self.bird_jump is True else 0,
             0,
-            16,
-            16,
+            self.bird_width,
+            self.bird_height,
             12
         )
 
