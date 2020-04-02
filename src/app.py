@@ -2,6 +2,19 @@ import pyxel
 
 
 class App:
+    # Position in resources file.
+    BIRD_WIDTH = 16
+    BIRD_HEIGHT = 16
+    DROP_BIRD_X = 0
+    DROP_BIRD_Y = 0
+    JUMP_BIRD_X = 16
+    JUMP_BIRD_Y = 0
+    PIPE_WIDTH = 32
+    PIPE_HEIGHT = 144
+    PIPE_X = 160
+    PIPE_Y = 0
+    PIPE_VERTICAL_GAP = 64
+
     def __init__(self):
         pyxel.init(200, 240, caption="Flappy Bird")
         pyxel.load("assets/jump_game.pyxres")
@@ -12,8 +25,6 @@ class App:
         # birds properties
         self.bird_x = 65
         self.bird_y = 100
-        self.bird_width = 16
-        self.bird_height = 16
 
         self.bird_is_alive = True
 
@@ -30,28 +41,28 @@ class App:
 
         # pipes properties
         self.pipe_total_time = 4
-        self.pipe_width = 32
         # TODO: generate randomly
         self.up_pipe_height = 88
+        self.pipe_x = 128
         self.pipe_pair = {
             'up': {
-                'x': 128,
+                'x': self.pipe_x,
                 'y': 0,
-                'u': 160,
-                'v': 56,
-                'w': 192,
-                'h': 144,
+                'u': self.PIPE_X,
+                'v': self.PIPE_Y,
+                'w': self.PIPE_X + self.PIPE_WIDTH,
+                'h': -self.up_pipe_height,
             },
             'down': {
-                'x': 128,
-                'y': 96,
-                'u': 160,
-                'v': 56,
-                'w': 192,
-                'h': -144,
+                'x': self.pipe_x,
+                'y': self.up_pipe_height + self.PIPE_VERTICAL_GAP,
+                'u': self.PIPE_X,
+                'v': self.PIPE_Y,
+                'w': self.PIPE_X + self.PIPE_WIDTH,
+                'h': self.up_pipe_height,
             },
         }
-        self.pipe_moving_speed = (pyxel.width+self.pipe_width) / self.pipe_total_time / self.board_fps
+        self.pipe_moving_speed = (pyxel.width+self.PIPE_WIDTH) / self.pipe_total_time / self.board_fps
 
         pyxel.run(self.update, self.draw)
 
@@ -95,10 +106,10 @@ class App:
             self.bird_x,
             self.bird_y,
             0,
-            16 if self.bird_jump is True else 0,
-            0,
-            self.bird_width,
-            self.bird_height,
+            self.JUMP_BIRD_X if self.bird_jump else self.DROP_BIRD_X,
+            self.JUMP_BIRD_Y if self.bird_jump else self.DROP_BIRD_Y,
+            self.BIRD_WIDTH,
+            self.BIRD_HEIGHT,
             12
         )
 
