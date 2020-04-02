@@ -1,6 +1,43 @@
 import pyxel
 
 
+class Bird:
+    BIRD_WIDTH = 16
+    BIRD_HEIGHT = 16
+    DROP_BIRD_X = 0
+    JUMP_BIRD_X = 16
+    BIRD_Y = 0
+    BIRD_DROP_SPEED = 0
+
+    def __init__(self, x, y, is_jump=False, is_alive=True):
+        self.x = x
+        self.y = y
+        self.u = self.JUMP_BIRD_X if is_jump else self.DROP_BIRD_X
+        self.v = self.BIRD_Y
+        self.w = self.BIRD_WIDTH
+        self.h = self.BIRD_HEIGHT
+        self.speed = self.BIRD_DROP_SPEED
+        self.is_alive = is_alive
+
+
+class Pipe:
+    PIPE_WIDTH = 32
+    PIPE_HEIGHT = 144
+    PIPE_X = 160
+    PIPE_Y = 0
+    PIPE_VERTICAL_GAP = 64
+    PIPE_HORIZONTAL_GAP = 96
+
+    def __init__(self, x, y, height, is_up=True):
+        self.x = x
+        self.y = y
+        self.u = self.PIPE_X
+        self.v = self.PIPE_Y
+        self.w = self.PIPE_WIDTH
+        self.h = -height if is_up else height
+        self.height = height
+
+
 class App:
     # Position in resources file.
     BIRD_WIDTH = 16
@@ -9,11 +46,6 @@ class App:
     DROP_BIRD_Y = 0
     JUMP_BIRD_X = 16
     JUMP_BIRD_Y = 0
-    PIPE_WIDTH = 32
-    PIPE_HEIGHT = 144
-    PIPE_X = 160
-    PIPE_Y = 0
-    PIPE_VERTICAL_GAP = 64
 
     def __init__(self):
         pyxel.init(200, 240, caption="Flappy Bird")
@@ -42,27 +74,14 @@ class App:
         # pipes properties
         self.pipe_total_time = 4
         # TODO: generate randomly
-        self.up_pipe_height = 88
-        self.pipe_x = 128
-        self.pipe_pair = {
-            'up': {
-                'x': self.pipe_x,
-                'y': 0,
-                'u': self.PIPE_X,
-                'v': self.PIPE_Y,
-                'w': self.PIPE_X + self.PIPE_WIDTH,
-                'h': -self.up_pipe_height,
-            },
-            'down': {
-                'x': self.pipe_x,
-                'y': self.up_pipe_height + self.PIPE_VERTICAL_GAP,
-                'u': self.PIPE_X,
-                'v': self.PIPE_Y,
-                'w': self.PIPE_X + self.PIPE_WIDTH,
-                'h': self.up_pipe_height,
-            },
-        }
-        self.pipe_moving_speed = (pyxel.width+self.PIPE_WIDTH) / self.pipe_total_time / self.board_fps
+        self.up_pipe = Pipe(128, 0, 88)
+        self.down_pipe = Pipe(
+            self.up_pipe.x,
+            self.up_pipe.height + Pipe.PIPE_VERTICAL_GAP,
+            pyxel.height - self.up_pipe.height - Pipe.PIPE_VERTICAL_GAP,
+            False,
+        )
+        self.pipe_moving_speed = (pyxel.width+Pipe.PIPE_WIDTH) / self.pipe_total_time / self.board_fps
 
         pyxel.run(self.update, self.draw)
 
@@ -98,8 +117,8 @@ class App:
         self.pipe_moving_speed += 2 / 10000
 
     def update_pipe_pair(self):
-        for pipe, location in self.pipe_pair.items():
-            self.pipe_pair[pipe]['x'] = (location['x'] - self.pipe_moving_speed) % pyxel.width
+        self.up_pipe.x = (self.up_pipe.x - self.pipe_moving_speed) % pyxel.width
+        self.down_pipe.x = (self.down_pipe.x - self.pipe_moving_speed) % pyxel.width
 
     def draw_bird(self):
         pyxel.blt(
@@ -114,17 +133,26 @@ class App:
         )
 
     def draw_pipe_pair(self):
-        for _, location in self.pipe_pair.items():
-            pyxel.blt(
-                location['x'],
-                location['y'],
-                0,
-                location['u'],
-                location['v'],
-                location['w'],
-                location['h'],
-                0
-            )
+        pyxel.blt(
+            self.up_pipe.x,
+            self.up_pipe.y,
+            0,
+            self.up_pipe.u,
+            self.up_pipe.v,
+            self.up_pipe.w,
+            self.up_pipe.h,
+            0
+        )
+        pyxel.blt(
+            self.down_pipe.x,
+            self.down_pipe.y,
+            0,
+            self.down_pipe.u,
+            self.down_pipe.v,
+            self.down_pipe.w,
+            self.down_pipe.h,
+            0
+        )
 
 
 App()
