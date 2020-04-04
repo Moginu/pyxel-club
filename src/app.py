@@ -27,6 +27,7 @@ class Pipe:
     PIPE_Y = 0
     PIPE_VERTICAL_GAP = 64
     PIPE_HORIZONTAL_GAP = 96
+    PIPE_TOTAL_TIME = 4
 
     def __init__(self, x, y, height, is_up=True):
         self.x = x
@@ -36,6 +37,17 @@ class Pipe:
         self.w = self.PIPE_WIDTH
         self.h = -height if is_up else height
         self.height = height
+
+
+class PipePair:
+    def __init__(self, up_pipe, screen_height):
+        self.up = up_pipe
+        self.down = Pipe(
+            self.up.x,
+            self.up.y + self.up.height + Pipe.PIPE_VERTICAL_GAP,
+            screen_height - self.up.height - Pipe.PIPE_VERTICAL_GAP,
+            False,
+        )
 
 
 class App:
@@ -72,16 +84,12 @@ class App:
         self.bird_jump = False
 
         # pipes properties
-        self.pipe_total_time = 4
         # TODO: generate randomly
-        self.up_pipe = Pipe(128, 0, 88)
-        self.down_pipe = Pipe(
-            self.up_pipe.x,
-            self.up_pipe.height + Pipe.PIPE_VERTICAL_GAP,
-            pyxel.height - self.up_pipe.height - Pipe.PIPE_VERTICAL_GAP,
-            False,
+        self.pipe_pair = PipePair(
+            Pipe(128, 0, 88),
+            pyxel.height,
         )
-        self.pipe_moving_speed = (pyxel.width+Pipe.PIPE_WIDTH) / self.pipe_total_time / self.board_fps
+        self.pipe_moving_speed = (pyxel.width+Pipe.PIPE_WIDTH) / Pipe.PIPE_TOTAL_TIME / self.board_fps
 
         pyxel.run(self.update, self.draw)
 
@@ -94,7 +102,7 @@ class App:
         self.update_pipe_pair()
 
     def draw(self):
-        # render background wiht color 12
+        # render background with color 12
         pyxel.cls(12)
 
         # draw bird
@@ -117,8 +125,9 @@ class App:
         self.pipe_moving_speed += 2 / 10000
 
     def update_pipe_pair(self):
-        self.up_pipe.x = (self.up_pipe.x - self.pipe_moving_speed) % pyxel.width
-        self.down_pipe.x = (self.down_pipe.x - self.pipe_moving_speed) % pyxel.width
+        self.pipe_pair.up.x = self.pipe_pair.down.x = (
+            self.pipe_pair.up.x + Pipe.PIPE_WIDTH - self.pipe_moving_speed
+        ) % (pyxel.width + Pipe.PIPE_WIDTH) - Pipe.PIPE_WIDTH
 
     def draw_bird(self):
         pyxel.blt(
@@ -134,23 +143,23 @@ class App:
 
     def draw_pipe_pair(self):
         pyxel.blt(
-            self.up_pipe.x,
-            self.up_pipe.y,
+            self.pipe_pair.up.x,
+            self.pipe_pair.up.y,
             0,
-            self.up_pipe.u,
-            self.up_pipe.v,
-            self.up_pipe.w,
-            self.up_pipe.h,
+            self.pipe_pair.up.u,
+            self.pipe_pair.up.v,
+            self.pipe_pair.up.w,
+            self.pipe_pair.up.h,
             0
         )
         pyxel.blt(
-            self.down_pipe.x,
-            self.down_pipe.y,
+            self.pipe_pair.down.x,
+            self.pipe_pair.down.y,
             0,
-            self.down_pipe.u,
-            self.down_pipe.v,
-            self.down_pipe.w,
-            self.down_pipe.h,
+            self.pipe_pair.down.u,
+            self.pipe_pair.down.v,
+            self.pipe_pair.down.w,
+            self.pipe_pair.down.h,
             0
         )
 
