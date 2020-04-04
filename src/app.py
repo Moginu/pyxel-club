@@ -1,5 +1,5 @@
 import pyxel
-
+import random
 
 class Bird:
     BIRD_WIDTH = 16
@@ -84,9 +84,9 @@ class App:
         self.bird_jump = False
 
         # pipes properties
-        # TODO: generate randomly
+        height = random.randint(32, 144)
         self.pipe_pair = PipePair(
-            Pipe(128, 0, 88),
+            Pipe(128, 0, height),
         )
         self.pipe_moving_speed = (pyxel.width+Pipe.PIPE_WIDTH) / Pipe.PIPE_TOTAL_TIME / self.board_fps
 
