@@ -40,12 +40,12 @@ class Pipe:
 
 
 class PipePair:
-    def __init__(self, up_pipe, screen_height):
+    def __init__(self, up_pipe):
         self.up = up_pipe
         self.down = Pipe(
             self.up.x,
             self.up.y + self.up.height + Pipe.PIPE_VERTICAL_GAP,
-            screen_height - self.up.height - Pipe.PIPE_VERTICAL_GAP,
+            pyxel.height - self.up.height - Pipe.PIPE_VERTICAL_GAP,
             False,
         )
 
@@ -87,7 +87,6 @@ class App:
         # TODO: generate randomly
         self.pipe_pair = PipePair(
             Pipe(128, 0, 88),
-            pyxel.height,
         )
         self.pipe_moving_speed = (pyxel.width+Pipe.PIPE_WIDTH) / Pipe.PIPE_TOTAL_TIME / self.board_fps
 
