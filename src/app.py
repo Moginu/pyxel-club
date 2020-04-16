@@ -76,15 +76,15 @@ class App:
 
         self.bird_is_alive = True
 
-        self.seconds = 1/self.board_fps
+        self.seconds_per_frame = 1/self.board_fps
 
-        self.total_time = 1000*self.seconds
+        self.total_time = 10
         self.bird_falling_speed = 0
-        self.max_falling_speed = pyxel.height/self.total_time
+        self.max_falling_speed = 2*pyxel.height/self.total_time
 
         self.bird_acceleration = 2*pyxel.height/(self.total_time*self.total_time)
 
-        self.bird_rising_speed = 2*self.max_falling_speed
+        self.bird_rising_speed = 2 * self.max_falling_speed / 3
         self.bird_jump = False
 
         # pipes properties
@@ -127,7 +127,7 @@ class App:
             self.bird_jump = True
         else:
             if self.bird_falling_speed < self.max_falling_speed:
-                self.bird_falling_speed += self.bird_acceleration*self.seconds
+                self.bird_falling_speed += self.bird_acceleration*self.seconds_per_frame
             self.bird_y = (self.bird_y+self.bird_falling_speed) % pyxel.height
             self.bird_jump = False
 
