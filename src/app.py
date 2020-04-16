@@ -26,7 +26,7 @@ class Pipe:
     PIPE_X = 160
     PIPE_Y = 0
     PIPE_VERTICAL_GAP = 64
-    PIPE_HORIZONTAL_GAP = (200-PIPE_WIDTH) / 2 + PIPE_WIDTH
+    PIPE_HORIZONTAL_GAP = (pyxel.width-PIPE_WIDTH) / 2 + PIPE_WIDTH
     PIPE_TOTAL_TIME = 4
 
     def __init__(self, x, y, height, is_up=True):
