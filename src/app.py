@@ -1,6 +1,9 @@
 import pyxel
 import random
 
+SCREEN_WIDTH = 200
+SCREEN_HEIGHT = 240
+
 
 class Bird:
     BIRD_WIDTH = 16
@@ -20,13 +23,14 @@ class Bird:
         self.speed = self.BIRD_DROP_SPEED
         self.is_alive = is_alive
 
+
 class Pipe:
     PIPE_WIDTH = 32
     PIPE_HEIGHT = 144
     PIPE_X = 160
     PIPE_Y = 0
     PIPE_VERTICAL_GAP = 64
-    PIPE_HORIZONTAL_GAP = (pyxel.width-PIPE_WIDTH) / 2 + PIPE_WIDTH
+    PIPE_HORIZONTAL_GAP = (SCREEN_WIDTH-PIPE_WIDTH) / 2 + PIPE_WIDTH
     PIPE_TOTAL_TIME = 4
 
     def __init__(self, x, y, height, is_up=True):
@@ -38,6 +42,7 @@ class Pipe:
         self.h = -height if is_up else height
         self.height = height
 
+
 class PipePair:
     def __init__(self, up_pipe):
         self.up = up_pipe
@@ -47,6 +52,7 @@ class PipePair:
             pyxel.height - self.up.height - Pipe.PIPE_VERTICAL_GAP,
             False,
         )
+
 
 class App:
     # Position in resources file.
@@ -58,7 +64,7 @@ class App:
     JUMP_BIRD_Y = 0
 
     def __init__(self):
-        pyxel.init(200, 240, caption="Flappy Bird")
+        pyxel.init(SCREEN_WIDTH, SCREEN_HEIGHT, caption="Flappy Bird")
         pyxel.load("assets/jump_game.pyxres")
 
         # board properties
@@ -91,14 +97,11 @@ class App:
             Pipe(128 + Pipe.PIPE_HORIZONTAL_GAP, 0, height2),
         )
         self.pipe_moving_speed = (pyxel.width+Pipe.PIPE_WIDTH) / Pipe.PIPE_TOTAL_TIME / self.board_fps
-
         pyxel.run(self.update, self.draw)
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
-
-
         if self.bird_is_alive:
             self.update_bird()
             self.update_pipe_moving_speed()
@@ -212,9 +215,6 @@ class App:
             bird_rec[1] >= up_pipe_rec[3]):    # top
             self.death_event()
             self.bird_is_alive = False
-
-
-
         if not (bird_rec[2] <= down_pipe_rec[0] or
             bird_rec[3] <= down_pipe_rec[1] or
             bird_rec[0] >= down_pipe_rec[2] or
@@ -222,9 +222,9 @@ class App:
             self.death_event()
             self.bird_is_alive = False
 
-
     def death_event(self):
         self.bird_is_alive = False
+
     def draw_death(self):
         """Draw a blank screen with some text."""
         pyxel.cls(col=0)
