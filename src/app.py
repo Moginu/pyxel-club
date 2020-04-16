@@ -96,18 +96,27 @@ class App:
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
-        self.update_bird()
-        self.update_pipe_moving_speed()
-        self.update_pipe_pair()
+
+        if self.bird_is_alive:
+            self.update_bird()
+            self.update_pipe_moving_speed()
+            self.update_pipe_pair()
+            self.death_judgment()
 
     def draw(self):
         # render background with color 12
-        pyxel.cls(12)
 
-        # draw bird
-        self.draw_bird()
-        # draw pipe pair
-        self.draw_pipe_pair()
+
+
+        if self.bird_is_alive:
+            pyxel.cls(12)
+            # draw bird
+            self.draw_bird()
+            # draw pipe pair
+            self.draw_pipe_pair()
+
+        else:
+            self.draw_death()
 
     def update_bird(self):
         if pyxel.btnp(pyxel.KEY_SPACE):
@@ -162,5 +171,39 @@ class App:
             0
         )
 
+    def _generate_rectangle(self,x,y,width,height):
+        return [x,y,x+width,y+height]
+
+    def death_judgment(self):
+        bird_rec = self._generate_rectangle(self.bird_x,self.bird_y,self.BIRD_WIDTH,self.BIRD_HEIGHT)
+        #print(bird_rec)
+        up_pipe_rec = self._generate_rectangle(self.pipe_pair.up.x,self.pipe_pair.up.y,Pipe.PIPE_WIDTH,-self.pipe_pair.up.h)
+        #print(up_pipe_rec)
+        down_pipe_rec = self._generate_rectangle(self.pipe_pair.down.x,self.pipe_pair.down.y,Pipe.PIPE_WIDTH,pyxel.height - self.pipe_pair.up.h - Pipe.PIPE_VERTICAL_GAP)
+        #print(down_pipe_rec)
+        #rec[x1,y1,x2,y2]
+        if not (bird_rec[2] <= up_pipe_rec[0] or # left
+            bird_rec[3] <= up_pipe_rec[1] or  # bottom
+            bird_rec[0] >= up_pipe_rec[2] or   # right
+            bird_rec[1] >= up_pipe_rec[3]):    # top
+            self.death_event()
+            self.bird_is_alive = False
+
+
+ 
+        if not (bird_rec[2] <= down_pipe_rec[0] or
+            bird_rec[3] <= down_pipe_rec[1] or
+            bird_rec[0] >= down_pipe_rec[2] or
+            bird_rec[1] >= down_pipe_rec[3]):
+            self.death_event()
+            self.bird_is_alive = False
+
+
+    def death_event(self):
+        self.bird_is_alive = False
+    def draw_death(self):
+        """Draw a blank screen with some text."""
+        pyxel.cls(col=0)
+        pyxel.text(55, 41, "Game over", pyxel.frame_count % 16)
 
 App()
