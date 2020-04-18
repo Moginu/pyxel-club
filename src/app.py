@@ -108,7 +108,7 @@ class App:
             self.update_bird()
             self.update_pipe_moving_speed()
             self.update_pipe_pair()
-            self.death_judgment()
+            # self.death_judgment()
 
     def draw(self):
         # render background with color 12
@@ -138,8 +138,8 @@ class App:
     def update_pipe_pair(self):
         for pipe_pair in self.pipe_pair:
             pipe_pair.up.x = pipe_pair.down.x = (
-                                                              pipe_pair.up.x + Pipe.PIPE_WIDTH - self.pipe_moving_speed
-                                                        ) % (pyxel.width + Pipe.PIPE_WIDTH) - Pipe.PIPE_WIDTH
+                pipe_pair.up.x + Pipe.PIPE_WIDTH - self.pipe_moving_speed
+            ) % (pyxel.width + Pipe.PIPE_WIDTH) - Pipe.PIPE_WIDTH
 
     def draw_bird(self):
         pyxel.blt(
