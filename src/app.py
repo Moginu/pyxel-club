@@ -30,7 +30,7 @@ class Pipe:
     PIPE_X = 160
     PIPE_Y = 0
     PIPE_VERTICAL_GAP = 48
-    PIPE_HORIZONTAL_GAP = (SCREEN_WIDTH-PIPE_WIDTH) / 2
+    PIPE_HORIZONTAL_GAP = (SCREEN_WIDTH - PIPE_WIDTH) / 2
     PIPE_TOTAL_TIME = 7 / 2
 
     def __init__(self, x, y, height, is_up=True):
@@ -76,13 +76,13 @@ class App:
 
         self.bird_is_alive = True
 
-        self.seconds_per_frame = 1/self.board_fps
+        self.seconds_per_frame = 1 / self.board_fps
 
         self.total_time = 8
         self.bird_falling_speed = 0
-        self.max_falling_speed = 2*pyxel.height/self.total_time
+        self.max_falling_speed = 2 * pyxel.height / self.total_time
 
-        self.bird_acceleration = 2*pyxel.height/(self.total_time*self.total_time)
+        self.bird_acceleration = 2 * pyxel.height / (self.total_time * self.total_time)
 
         self.bird_rising_speed = 2 * self.max_falling_speed / 5
         self.bird_jump = False
@@ -90,13 +90,15 @@ class App:
         # pipes properties
         height = random.randint(32, 144)
         height2 = random.randint(32, 144)
-        self.pipe_pair = PipePair(
-            Pipe(128, 0, height),
-        )
-        self.pipe_pair2 = PipePair(
-            Pipe(128 + Pipe.PIPE_WIDTH + Pipe.PIPE_HORIZONTAL_GAP, 0, height2),
-        )
-        self.pipe_moving_speed = (pyxel.width+Pipe.PIPE_WIDTH) / Pipe.PIPE_TOTAL_TIME / self.board_fps
+        self.pipe_pair = [
+            PipePair(
+                Pipe(128, 0, height),
+            ),
+            PipePair(
+                Pipe(128 + Pipe.PIPE_WIDTH + Pipe.PIPE_HORIZONTAL_GAP, 0, height2),
+            )
+        ]
+        self.pipe_moving_speed = (pyxel.width + Pipe.PIPE_WIDTH) / Pipe.PIPE_TOTAL_TIME / self.board_fps
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -116,31 +118,28 @@ class App:
             self.draw_bird()
             # draw pipe pair
             self.draw_pipe_pair()
-            self.draw_pipe_pair2()
         else:
             self.draw_death()
 
     def update_bird(self):
         if pyxel.btnp(pyxel.KEY_SPACE):
-            self.bird_y = (self.bird_y-self.bird_rising_speed) % pyxel.height
+            self.bird_y = (self.bird_y - self.bird_rising_speed) % pyxel.height
             self.bird_falling_speed = 0
             self.bird_jump = True
         else:
             if self.bird_falling_speed < self.max_falling_speed:
-                self.bird_falling_speed += self.bird_acceleration*self.seconds_per_frame
-            self.bird_y = (self.bird_y+self.bird_falling_speed) % pyxel.height
+                self.bird_falling_speed += self.bird_acceleration * self.seconds_per_frame
+            self.bird_y = (self.bird_y + self.bird_falling_speed) % pyxel.height
             self.bird_jump = False
 
     def update_pipe_moving_speed(self):
         self.pipe_moving_speed += 2 / 10000
 
     def update_pipe_pair(self):
-        self.pipe_pair.up.x = self.pipe_pair.down.x = (
-            self.pipe_pair.up.x + Pipe.PIPE_WIDTH - self.pipe_moving_speed
-        ) % (pyxel.width + Pipe.PIPE_WIDTH) - Pipe.PIPE_WIDTH
-        self.pipe_pair2.up.x = self.pipe_pair2.down.x = (
-            self.pipe_pair2.up.x + Pipe.PIPE_WIDTH - self.pipe_moving_speed
-        ) % (pyxel.width + Pipe.PIPE_WIDTH) - Pipe.PIPE_WIDTH
+        for pipe_pair in self.pipe_pair:
+            pipe_pair.up.x = pipe_pair.down.x = (
+                                                              pipe_pair.up.x + Pipe.PIPE_WIDTH - self.pipe_moving_speed
+                                                        ) % (pyxel.width + Pipe.PIPE_WIDTH) - Pipe.PIPE_WIDTH
 
     def draw_bird(self):
         pyxel.blt(
@@ -155,70 +154,52 @@ class App:
         )
 
     def draw_pipe_pair(self):
-        pyxel.blt(
-            self.pipe_pair.up.x,
-            self.pipe_pair.up.y,
-            0,
-            self.pipe_pair.up.u,
-            self.pipe_pair.up.v,
-            self.pipe_pair.up.w,
-            self.pipe_pair.up.h,
-            0
-        )
-        pyxel.blt(
-            self.pipe_pair.down.x,
-            self.pipe_pair.down.y,
-            0,
-            self.pipe_pair.down.u,
-            self.pipe_pair.down.v,
-            self.pipe_pair.down.w,
-            self.pipe_pair.down.h,
-            0
-        )
+        for pipe_pair in self.pipe_pair:
+            pyxel.blt(
+                pipe_pair.up.x,
+                pipe_pair.up.y,
+                0,
+                pipe_pair.up.u,
+                pipe_pair.up.v,
+                pipe_pair.up.w,
+                pipe_pair.up.h,
+                0
+            )
+            pyxel.blt(
+                pipe_pair.down.x,
+                pipe_pair.down.y,
+                0,
+                pipe_pair.down.u,
+                pipe_pair.down.v,
+                pipe_pair.down.w,
+                pipe_pair.down.h,
+                0
+            )
 
-    def draw_pipe_pair2(self):
-        pyxel.blt(
-            self.pipe_pair2.up.x,
-            self.pipe_pair2.up.y,
-            0,
-            self.pipe_pair2.up.u,
-            self.pipe_pair2.up.v,
-            self.pipe_pair2.up.w,
-            self.pipe_pair2.up.h,
-            0
-        )
-        pyxel.blt(
-            self.pipe_pair2.down.x,
-            self.pipe_pair2.down.y,
-            0,
-            self.pipe_pair2.down.u,
-            self.pipe_pair2.down.v,
-            self.pipe_pair2.down.w,
-            self.pipe_pair2.down.h,
-            0
-        )
 
-    def _generate_rectangle(self,x,y,width,height):
-        return [x,y,x+width,y+height]
+    def _generate_rectangle(self, x, y, width, height):
+        return [x, y, x + width, y + height]
 
     def death_judgment(self):
-        bird_rec = self._generate_rectangle(self.bird_x,self.bird_y,self.BIRD_WIDTH,self.BIRD_HEIGHT)
-        #print(bird_rec)
-        up_pipe_rec = self._generate_rectangle(self.pipe_pair.up.x,self.pipe_pair.up.y,Pipe.PIPE_WIDTH,-self.pipe_pair.up.h)
-        #print(up_pipe_rec)
-        down_pipe_rec = self._generate_rectangle(self.pipe_pair.down.x,self.pipe_pair.down.y,Pipe.PIPE_WIDTH,pyxel.height - self.pipe_pair.up.h - Pipe.PIPE_VERTICAL_GAP)
-        #print(down_pipe_rec)
-        #rec[x1,y1,x2,y2]
-        if not (bird_rec[2] <= up_pipe_rec[0] or # left
-            bird_rec[3] <= up_pipe_rec[1] or  # bottom
-            bird_rec[0] >= up_pipe_rec[2] or   # right
-            bird_rec[1] >= up_pipe_rec[3]):    # top
+        bird_rec = self._generate_rectangle(self.bird_x, self.bird_y, self.BIRD_WIDTH, self.BIRD_HEIGHT)
+        # print(bird_rec)
+        up_pipe_rec = self._generate_rectangle(self.pipe_pair.up.x, self.pipe_pair.up.y, Pipe.PIPE_WIDTH,
+                                               -self.pipe_pair.up.h)
+        # print(up_pipe_rec)
+        down_pipe_rec = self._generate_rectangle(self.pipe_pair.down.x, self.pipe_pair.down.y, Pipe.PIPE_WIDTH,
+                                                 pyxel.height - self.pipe_pair.up.h - Pipe.PIPE_VERTICAL_GAP)
+        # print(down_pipe_rec)
+        # rec[x1,y1,x2,y2]
+        if not (bird_rec[2] <= up_pipe_rec[0] or  # left
+                bird_rec[3] <= up_pipe_rec[1] or  # bottom
+                bird_rec[0] >= up_pipe_rec[2] or  # right
+                bird_rec[1] >= up_pipe_rec[3]):  # top
             self.death_event()
             self.bird_is_alive = False
         if not (bird_rec[2] <= down_pipe_rec[0] or
-            bird_rec[3] <= down_pipe_rec[1] or
-            bird_rec[0] >= down_pipe_rec[2] or
-            bird_rec[1] >= down_pipe_rec[3]):
+                bird_rec[3] <= down_pipe_rec[1] or
+                bird_rec[0] >= down_pipe_rec[2] or
+                bird_rec[1] >= down_pipe_rec[3]):
             self.death_event()
             self.bird_is_alive = False
 
@@ -229,5 +210,6 @@ class App:
         """Draw a blank screen with some text."""
         pyxel.cls(col=0)
         pyxel.text(55, 41, "Game over", pyxel.frame_count % 16)
+
 
 App()
