@@ -90,7 +90,7 @@ class App:
         # pipes properties
         height = random.randint(32, 144)
         height2 = random.randint(32, 144)
-        self.pipe_pair = [
+        self.pipe_pairs = [
             PipePair(
                 Pipe(128, 0, height),
             ),
@@ -108,7 +108,7 @@ class App:
             self.update_bird()
             self.update_pipe_moving_speed()
             self.update_pipe_pair()
-            # self.death_judgment()
+            self.death_judgment()
 
     def draw(self):
         # render background with color 12
@@ -136,7 +136,7 @@ class App:
         self.pipe_moving_speed += 2 / 10000
 
     def update_pipe_pair(self):
-        for pipe_pair in self.pipe_pair:
+        for pipe_pair in self.pipe_pairs:
             pipe_pair.up.x = pipe_pair.down.x = (
                 pipe_pair.up.x + Pipe.PIPE_WIDTH - self.pipe_moving_speed
             ) % (pyxel.width + Pipe.PIPE_WIDTH) - Pipe.PIPE_WIDTH
@@ -154,7 +154,7 @@ class App:
         )
 
     def draw_pipe_pair(self):
-        for pipe_pair in self.pipe_pair:
+        for pipe_pair in self.pipe_pairs:
             pyxel.blt(
                 pipe_pair.up.x,
                 pipe_pair.up.y,
