@@ -29,7 +29,7 @@ class Pipe:
     PIPE_HEIGHT = 144
     PIPE_X = 160
     PIPE_Y = 0
-    PIPE_VERTICAL_GAP = 48
+    PIPE_VERTICAL_GAP = 64
     PIPE_HORIZONTAL_GAP = (SCREEN_WIDTH - PIPE_WIDTH) / 2
     PIPE_TOTAL_TIME = 7 / 2
 
@@ -52,6 +52,7 @@ class PipePair:
             pyxel.height - self.up.height - Pipe.PIPE_VERTICAL_GAP,
             False,
         )
+        self.is_drawn = False
 
 
 class App:
@@ -92,10 +93,10 @@ class App:
         height2 = random.randint(32, 144)
         self.pipe_pairs = [
             PipePair(
-                Pipe(128, 0, height),
+                Pipe(2 * pyxel.width, 0, height),
             ),
             PipePair(
-                Pipe(128 + Pipe.PIPE_WIDTH + Pipe.PIPE_HORIZONTAL_GAP, 0, height2),
+                Pipe(2 * pyxel.width + Pipe.PIPE_WIDTH + Pipe.PIPE_HORIZONTAL_GAP, 0, height2),
             )
         ]
         self.pipe_moving_speed = (pyxel.width + Pipe.PIPE_WIDTH) / Pipe.PIPE_TOTAL_TIME / self.board_fps
@@ -137,9 +138,14 @@ class App:
 
     def update_pipe_pair(self):
         for pipe_pair in self.pipe_pairs:
-            pipe_pair.up.x = pipe_pair.down.x = (
-                pipe_pair.up.x + Pipe.PIPE_WIDTH - self.pipe_moving_speed
-            ) % (pyxel.width + Pipe.PIPE_WIDTH) - Pipe.PIPE_WIDTH
+            if pipe_pair.is_drawn:
+                pipe_pair.up.x = pipe_pair.down.x = (
+                    pipe_pair.up.x + Pipe.PIPE_WIDTH - self.pipe_moving_speed
+                ) % (pyxel.width + Pipe.PIPE_WIDTH) - Pipe.PIPE_WIDTH
+            else:
+                pipe_pair.up.x = pipe_pair.down.x = pipe_pair.up.x - self.pipe_moving_speed
+                if pipe_pair.up.x <= pyxel.width:
+                    pipe_pair.is_drawn = True
 
     def draw_bird(self):
         pyxel.blt(
@@ -155,26 +161,27 @@ class App:
 
     def draw_pipe_pair(self):
         for pipe_pair in self.pipe_pairs:
-            pyxel.blt(
-                pipe_pair.up.x,
-                pipe_pair.up.y,
-                0,
-                pipe_pair.up.u,
-                pipe_pair.up.v,
-                pipe_pair.up.w,
-                pipe_pair.up.h,
-                0
-            )
-            pyxel.blt(
-                pipe_pair.down.x,
-                pipe_pair.down.y,
-                0,
-                pipe_pair.down.u,
-                pipe_pair.down.v,
-                pipe_pair.down.w,
-                pipe_pair.down.h,
-                0
-            )
+            if pipe_pair.is_drawn:
+                pyxel.blt(
+                    pipe_pair.up.x,
+                    pipe_pair.up.y,
+                    0,
+                    pipe_pair.up.u,
+                    pipe_pair.up.v,
+                    pipe_pair.up.w,
+                    pipe_pair.up.h,
+                    0
+                )
+                pyxel.blt(
+                    pipe_pair.down.x,
+                    pipe_pair.down.y,
+                    0,
+                    pipe_pair.down.u,
+                    pipe_pair.down.v,
+                    pipe_pair.down.w,
+                    pipe_pair.down.h,
+                    0
+                )
 
 
     def death_judgment(self):
