@@ -78,7 +78,7 @@ class App:
 
         self.seconds_per_frame = 1/self.board_fps
 
-        self.total_time = 10
+        self.total_time = 8
         self.bird_falling_speed = 0
         self.max_falling_speed = 2*pyxel.height/self.total_time
 
