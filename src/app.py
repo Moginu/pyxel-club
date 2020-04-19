@@ -1,5 +1,7 @@
 import pyxel
 import random
+from collections import deque
+
 
 SCREEN_WIDTH = 200
 SCREEN_HEIGHT = 240
@@ -52,7 +54,7 @@ class PipePair:
             pyxel.height - self.up.height - Pipe.PIPE_VERTICAL_GAP,
             False,
         )
-        self.is_drawn = False
+        self.is_drawn = True
 
 
 class App:
@@ -89,16 +91,10 @@ class App:
         self.bird_jump = False
 
         # pipes properties
-        height = random.randint(32, 144)
-        height2 = random.randint(32, 144)
-        self.pipe_pairs = [
-            PipePair(
-                Pipe(2 * pyxel.width, 0, height),
-            ),
-            PipePair(
-                Pipe(2 * pyxel.width + Pipe.PIPE_WIDTH + Pipe.PIPE_HORIZONTAL_GAP, 0, height2),
-            )
-        ]
+
+        self.pipe_pairs = deque()
+        self.pipe_pairs.append(self.generate_random_pipe_pair())
+
         self.pipe_moving_speed = (pyxel.width + Pipe.PIPE_WIDTH) / Pipe.PIPE_TOTAL_TIME / self.board_fps
         pyxel.run(self.update, self.draw)
 
@@ -137,15 +133,22 @@ class App:
         self.pipe_moving_speed += 2 / 10000
 
     def update_pipe_pair(self):
+        is_append = False
+        is_popleft = False
         for pipe_pair in self.pipe_pairs:
-            if pipe_pair.is_drawn:
-                pipe_pair.up.x = pipe_pair.down.x = (
-                    pipe_pair.up.x + Pipe.PIPE_WIDTH - self.pipe_moving_speed
-                ) % (pyxel.width + Pipe.PIPE_WIDTH) - Pipe.PIPE_WIDTH
-            else:
-                pipe_pair.up.x = pipe_pair.down.x = pipe_pair.up.x - self.pipe_moving_speed
-                if pipe_pair.up.x <= pyxel.width:
-                    pipe_pair.is_drawn = True
+            if abs(pipe_pair.up.x - (Pipe.PIPE_HORIZONTAL_GAP+Pipe.PIPE_WIDTH)) >= 0 and\
+               abs(pipe_pair.up.x - (Pipe.PIPE_HORIZONTAL_GAP+Pipe.PIPE_WIDTH)) <= 1:
+                is_append = True
+            pipe_pair.up.x = pipe_pair.down.x = (
+                pipe_pair.up.x - self.pipe_moving_speed
+            )
+            if pipe_pair.up.x < -Pipe.PIPE_WIDTH:
+                is_popleft = True
+
+        if is_append is True:
+            self.pipe_pairs.append(self.generate_random_pipe_pair())
+        if is_popleft is True:
+            self.pipe_pairs.popleft()
 
     def draw_bird(self):
         pyxel.blt(
@@ -182,7 +185,6 @@ class App:
                     pipe_pair.down.h,
                     0
                 )
-
 
     def death_judgment(self):
         bird_rec = self._generate_rectangle(
@@ -224,6 +226,9 @@ class App:
     def draw_death(self):
         pyxel.cls(col=0)
         pyxel.text(55, 41, "Game over", pyxel.frame_count % 16)
+
+    def generate_random_pipe_pair(self):
+        return PipePair(Pipe(200, 0, random.randint(32, 144)))
 
 
 App()
