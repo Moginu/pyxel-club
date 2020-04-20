@@ -55,6 +55,8 @@ class PipePair:
             False,
         )
         self.is_drawn = True
+        self.is_append = False
+        self.is_scored = False
 
 
 class App:
@@ -139,8 +141,8 @@ class App:
         is_append = False
         is_popleft = False
         for pipe_pair in self.pipe_pairs:
-            if abs(pipe_pair.up.x - (Pipe.PIPE_HORIZONTAL_GAP+Pipe.PIPE_WIDTH)) >= 0 and\
-               abs(pipe_pair.up.x - (Pipe.PIPE_HORIZONTAL_GAP+Pipe.PIPE_WIDTH)) <= 1:
+            if abs(pipe_pair.up.x - Pipe.PIPE_HORIZONTAL_GAP) >= 0 and\
+               abs(pipe_pair.up.x - Pipe.PIPE_HORIZONTAL_GAP) <= 1:
                 is_append = True
             pipe_pair.up.x = pipe_pair.down.x = (
                 pipe_pair.up.x - self.pipe_moving_speed
@@ -155,8 +157,9 @@ class App:
 
     def update_score(self):
         for pipe_pair in self.pipe_pairs:
-            if self.bird_x + Bird.BIRD_WIDTH > pipe_pair.up.x:
+            if self.bird_x + Bird.BIRD_WIDTH >= pipe_pair.up.x and not pipe_pair.is_scored:
                 self.score += 1
+                pipe_pair.is_scored = True
 
     def draw_bird(self):
         pyxel.blt(
