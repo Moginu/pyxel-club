@@ -230,6 +230,8 @@ class App:
            or bird_rec[1] >= pipe_rec[3]):
             self.death_event()
             self.bird_is_alive = False
+        if not bird_rec[1] <= SCREEN_HEIGHT - Bird.BIRD_HEIGHT and bird_rec[1] >= 0:
+            self.bird_is_alive = False
 
     def death_event(self):
         self.bird_is_alive = False
