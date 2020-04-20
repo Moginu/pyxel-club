@@ -65,6 +65,7 @@ class App:
     DROP_BIRD_Y = 0
     JUMP_BIRD_X = 16
     JUMP_BIRD_Y = 0
+    score = 0
 
     def __init__(self):
         pyxel.init(SCREEN_WIDTH, SCREEN_HEIGHT, caption="Flappy Bird")
@@ -105,6 +106,7 @@ class App:
             self.update_bird()
             self.update_pipe_moving_speed()
             self.update_pipe_pair()
+            self.update_score()
             self.death_judgment()
 
     def draw(self):
@@ -115,6 +117,7 @@ class App:
             self.draw_bird()
             # draw pipe pair
             self.draw_pipe_pair()
+            self.draw_score()
         else:
             self.draw_death()
 
@@ -149,6 +152,11 @@ class App:
             self.pipe_pairs.append(self.generate_random_pipe_pair())
         if is_popleft is True:
             self.pipe_pairs.popleft()
+
+    def update_score(self):
+        for pipe_pair in self.pipe_pairs:
+            if self.bird_x + Bird.BIRD_WIDTH > pipe_pair.up.x:
+                self.score += 1
 
     def draw_bird(self):
         pyxel.blt(
@@ -229,6 +237,9 @@ class App:
 
     def generate_random_pipe_pair(self):
         return PipePair(Pipe(200, 0, random.randint(32, 144)))
+
+    def draw_score(self):
+        pyxel.text(20, 20, str(self.score), 7)
 
 
 App()
