@@ -33,7 +33,7 @@ class Pipe:
     PIPE_Y = 0
     PIPE_VERTICAL_GAP = 64
     PIPE_HORIZONTAL_GAP = (SCREEN_WIDTH - PIPE_WIDTH) / 2
-    PIPE_TOTAL_TIME = 7 / 2
+    PIPE_TOTAL_TIME = 3
 
     def __init__(self, x, y, height, is_up=True):
         self.x = x
@@ -84,13 +84,13 @@ class App:
 
         self.seconds_per_frame = 1 / self.board_fps
 
-        self.total_time = 8
+        self.total_time = 7
         self.bird_falling_speed = 0
         self.max_falling_speed = 2 * pyxel.height / self.total_time
 
         self.bird_acceleration = 2 * pyxel.height / (self.total_time * self.total_time)
 
-        self.bird_rising_speed = 2 * self.max_falling_speed / 5
+        self.bird_rising_speed = 1 * self.max_falling_speed / 2
         self.bird_jump = False
 
         # pipes properties
