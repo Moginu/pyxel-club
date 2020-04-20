@@ -140,13 +140,14 @@ class App:
     def update_pipe_pair(self):
         is_append = False
         is_popleft = False
-        for pipe_pair in self.pipe_pairs:
-            if abs(pipe_pair.up.x - Pipe.PIPE_HORIZONTAL_GAP) >= 0 and\
-               abs(pipe_pair.up.x - Pipe.PIPE_HORIZONTAL_GAP) <= 1:
-                is_append = True
+        for i,pipe_pair in enumerate(self.pipe_pairs):
             pipe_pair.up.x = pipe_pair.down.x = (
                 pipe_pair.up.x - self.pipe_moving_speed
             )
+            if pipe_pair.is_append is False:
+                if pipe_pair.up.x - (Pipe.PIPE_HORIZONTAL_GAP) <= 0:
+                    self.pipe_pairs[i].is_append = True
+                    is_append = True
             if pipe_pair.up.x < -Pipe.PIPE_WIDTH:
                 is_popleft = True
 
